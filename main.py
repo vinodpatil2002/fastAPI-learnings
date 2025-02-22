@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from typing import Optional
+from pydantic import BaseModel
 
 
 app = FastAPI()
@@ -14,6 +16,17 @@ async def read_root():
     return {"message": "Here there are infos about this project"}
 
 
-@app.get("/greet/{name}")
-async def greet(name: str) -> dict:
-    return {"message": f"Hello {name}"}
+@app.get("/greet")
+async def greet(name: Optional[str] = "user", age: Optional[int] = 0) -> dict:
+    return {"message": f"Hello {name}", "age": age}
+
+
+class UserModel(BaseModel):
+    username: str
+    password: str
+
+
+@app.post("/register")
+async def registerUser(userdata: UserModel):
+    return {"username": userdata.username, "password": userdata.password}
+
